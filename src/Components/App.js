@@ -1,9 +1,9 @@
 import { connect } from "react-redux";
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 
 import React from "react";
 import { fetchPosts } from "../actions/posts";
-import { PostList, Navbar } from "./";
+import { Navbar, Home, Page404, Login, Signup } from "./";
 import PropTypes from "prop-types";
 class App extends React.Component {
   componentDidMount() {
@@ -16,7 +16,18 @@ class App extends React.Component {
       <Router>
         <div>
           <Navbar />
-          <PostList posts={posts} />
+          <Switch>
+            <Route
+              exact
+              path="/"
+              component={(props) => {
+                return <Home {...props} posts={posts}></Home>;
+              }}
+            ></Route>
+            <Route path="/login" component={Login}></Route>
+            <Route path="/signup" component={Signup}></Route>
+            <Route path="" component={Page404}></Route>
+          </Switch>
         </div>
       </Router>
     );
