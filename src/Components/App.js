@@ -5,9 +5,13 @@ import React from "react";
 import { fetchPosts } from "../actions/posts";
 import { Navbar, Home, Page404, Login, Signup } from "./";
 import PropTypes from "prop-types";
+import jwtDecode from "jwt-decode";
 class App extends React.Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());
+    const token = localStorage.getItem("token");
+    const user = jwtDecode(token);
+    console.log("user", user);
   }
 
   render() {
