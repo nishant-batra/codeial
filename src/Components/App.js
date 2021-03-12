@@ -6,12 +6,20 @@ import { fetchPosts } from "../actions/posts";
 import { Navbar, Home, Page404, Login, Signup } from "./";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
+import { authenticateUser } from "../actions/auth";
 class App extends React.Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());
     const token = localStorage.getItem("token");
     const user = jwtDecode(token);
     console.log("user", user);
+    this.props.dispatch(
+      authenticateUser({
+        email: user.email,
+        name: user.name,
+        _id: user._id,
+      })
+    );
   }
 
   render() {
