@@ -10,8 +10,15 @@ import { authenticateUser } from "../actions/auth";
 class App extends React.Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());
+
     const token = localStorage.getItem("token");
-    const user = jwtDecode(token);
+    let user;
+    try {
+      user = jwtDecode(token);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
     console.log("user", user);
     this.props.dispatch(
       authenticateUser({

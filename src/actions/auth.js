@@ -7,6 +7,7 @@ import {
   SIGNUP_START,
   SIGNUP_FAILED,
   SIGNUP_SUCCESS,
+  CLEAR_AUTH,
 } from "./actionType";
 import { APIurls } from "../helpers/url";
 import { getFormBody } from "../helpers/Utils";
@@ -114,5 +115,10 @@ export function signupSuccessful(user) {
   return {
     type: SIGNUP_SUCCESS,
     user,
+  };
+}
+export function clearAuthState() {
+  return {
+    type: CLEAR_AUTH,
   };
 }

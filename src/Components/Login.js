@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, logErrorToMyService } from "react";
 import { connect } from "react-redux";
-import { login } from "../actions/auth";
+import { Redirect } from "react-router";
+import { clearAuthState, login } from "../actions/auth";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +12,11 @@ class Login extends Component {
       password: "",
     };
   }
+
+  componentWillUnmount() {
+    this.props.dispatch(clearAuthState());
+  }
+
   handleFormSubmit = () => {
     //console.log(this.emailRef.current.value, this.passRef.value);
     //  console.log(this.state);
@@ -31,7 +37,10 @@ class Login extends Component {
   };
   render() {
     //  console.log("proprs", this.props);
-    const { error, inProgress } = this.props.auth;
+    const { error, inProgress, isLoggedin } = this.props.auth;
+    if (isLoggedin) {
+      return <Redirect to="/" />;
+    }
     return (
       <form className="login-form">
         <div className="login-signup-header"> Log In</div>
