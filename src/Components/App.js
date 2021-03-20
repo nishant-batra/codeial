@@ -9,14 +9,12 @@ import {
 
 import React from "react";
 import { fetchPosts } from "../actions/posts";
-import { Navbar, Home, Page404, Login, Signup } from "./";
+import { Navbar, Home, Page404, Login, Signup, Settings } from "./";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import { authenticateUser } from "../actions/auth";
 import auth from "../Reducers/auth";
-const settings = () => {
-  return <div>Settings</div>;
-};
+
 const PrivatRoute = (privateRouteProps) => {
   const { isLoggedIn, path, component: Component } = privateRouteProps;
   return (
@@ -71,7 +69,7 @@ class App extends React.Component {
 
             <PrivatRoute
               path="/settings"
-              component={settings}
+              component={Settings}
               isLoggedIn={this.props.auth.isLoggedin}
             />
             <Route path="" component={Page404}></Route>
