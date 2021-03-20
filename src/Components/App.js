@@ -22,7 +22,18 @@ const PrivatRoute = (privateRouteProps) => {
       path={path}
       render={(props) => {
         //props are the ones that react router dom sends like history,location,etc.
-        return isLoggedIn ? <Component {...props} /> : <Redirect to="/login" />;
+        return isLoggedIn ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: {
+                from: props.location,
+              },
+            }}
+          />
+        );
       }}
     />
   );
