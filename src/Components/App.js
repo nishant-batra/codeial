@@ -6,16 +6,16 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-
+import { getAuthTokenFromLocalStorage } from "../helpers/Utils";
 import React from "react";
 import { fetchPosts } from "../actions/posts";
-import { Navbar, Home, Page404, Login, Signup, Settings } from "./";
+import { Navbar, Home, Page404, Login, Signup, Settings, User } from "./";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import { authenticateUser } from "../actions/auth";
 import auth from "../Reducers/auth";
 
-const PrivatRoute = (privateRouteProps) => {
+const PrivateRoute = (privateRouteProps) => {
   const { isLoggedIn, path, component: Component } = privateRouteProps;
   return (
     <Route
@@ -42,7 +42,7 @@ class App extends React.Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());
 
-    const token = localStorage.getItem("token");
+    const token = getAuthTokenFromLocalStorage();
     let user;
     try {
       user = jwtDecode(token);
@@ -77,8 +77,12 @@ class App extends React.Component {
             ></Route>
             <Route path="/login" component={Login}></Route>
             <Route path="/signup" component={Signup}></Route>
-
-            <PrivatRoute
+            <PrivateRoute
+              path="/user/:userID"
+              component={User}
+              isLoggedIn={this.props.auth.isLoggedin}
+            />
+            <PrivateRoute
               path="/settings"
               component={Settings}
               isLoggedIn={this.props.auth.isLoggedin}
