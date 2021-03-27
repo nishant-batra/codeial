@@ -1,29 +1,38 @@
+import React from "react";
 import { connect } from "react-redux";
 import {
   BrowserRouter as Router,
-  Link,
-  Redirect,
   Route,
   Switch,
+  Redirect,
 } from "react-router-dom";
-import { getAuthTokenFromLocalStorage } from "../helpers/Utils";
-import React from "react";
-import { fetchPosts } from "../actions/posts";
-import { Navbar, Home, Page404, Login, Signup, Settings, User } from "./";
 import PropTypes from "prop-types";
+
+import { fetchPosts } from "../actions/posts";
+import {
+  Home,
+  Navbar,
+  Page404,
+  Login,
+  Signup,
+  Settings,
+  UserProfile,
+} from "./";
 import jwtDecode from "jwt-decode";
 import { authenticateUser } from "../actions/auth";
-import auth from "../Reducers/auth";
+import { getAuthTokenFromLocalStorage } from "../helpers/utils";
 import { fetchUserFriends } from "../actions/friends";
 
 const PrivateRoute = (privateRouteProps) => {
-  const { isLoggedIn, path, component: Component } = privateRouteProps;
+  const { isLoggedin, path, component: Component } = privateRouteProps;
+
   return (
     <Route
       path={path}
       render={(props) => {
-        //props are the ones that react router dom sends like history,location,etc.
-        return isLoggedIn ? (
+        console.log("props", props);
+        console.log("isLoggedin", isLoggedin);
+        return isLoggedin ? (
           <Component {...props} />
         ) : (
           <Redirect
@@ -39,78 +48,81 @@ const PrivateRoute = (privateRouteProps) => {
     />
   );
 };
+
 class App extends React.Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());
 
     const token = getAuthTokenFromLocalStorage();
 
-    let user;
-    try {
-      user = jwtDecode(token);
-    } catch (error) {
-      console.log(error);
-      return;
+    if (token) {
+      const user = jwtDecode(token);
+
+      console.log("user", user);
+      this.props.dispatch(
+        authenticateUser({
+          email: user.email,
+          _id: user._id,
+          name: user.name,
+        })
+      );
+
+      this.props.dispatch(fetchUserFriends());
     }
-    //    console.log("user", user);
-    this.props.dispatch(
-      authenticateUser({
-        email: user.email,
-        name: user.name,
-        _id: user._id,
-      })
-    );
-    this.props.dispatch(fetchUserFriends);
   }
 
   render() {
-    console.log("props", this.props);
-    const { posts, friends } = this.props;
+    const { posts, auth, friends } = this.props;
     return (
       <Router>
         <div>
           <Navbar />
+
           <Switch>
             <Route
               exact
               path="/"
-              component={(props) => {
+              render={(props) => {
                 return (
                   <Home
                     {...props}
                     posts={posts}
                     friends={friends}
-                    isLoggedin={this.props.auth.isLoggedin}
-                  ></Home>
+                    isLoggedin={auth.isLoggedin}
+                  />
                 );
               }}
-            ></Route>
-            <Route path="/login" component={Login}></Route>
-            <Route path="/signup" component={Signup}></Route>
-            <PrivateRoute
-              path="/user/:userID"
-              component={User}
-              isLoggedIn={this.props.auth.isLoggedin}
             />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
             <PrivateRoute
               path="/settings"
               component={Settings}
-              isLoggedIn={this.props.auth.isLoggedin}
+              isLoggedin={auth.isLoggedin}
             />
-            <Route path="" component={Page404}></Route>
+            <PrivateRoute
+              path="/user/:userId"
+              component={UserProfile}
+              isLoggedin={auth.isLoggedin}
+            />
+            <Route component={Page404} />
           </Switch>
         </div>
       </Router>
     );
   }
 }
+
 function mapStateToProps(state) {
   return {
     posts: state.posts,
     auth: state.auth,
+    friends: state.friends,
   };
 }
+
 App.propTypes = {
   posts: PropTypes.array.isRequired,
 };
+
 export default connect(mapStateToProps)(App);

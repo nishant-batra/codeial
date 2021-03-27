@@ -1,36 +1,31 @@
-import userEvent from "@testing-library/user-event";
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { clearAuthState, editUser } from "../actions/auth";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { editUser, clearAuthState } from '../actions/auth';
 
 class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: this.props.auth.user.name,
-      password: "",
-      confirmPassword: "",
+      name: props.auth.user.name,
+      password: '',
+      confirmPassword: '',
       editMode: false,
     };
   }
-  handleInput = (fieldName, val) => {
+
+  handleChange = (fieldName, val) => {
     this.setState({
       [fieldName]: val,
     });
   };
-  handleClick = () => {
+
+  handleSave = () => {
     const { password, confirmPassword, name } = this.state;
     const { user } = this.props.auth;
-    if (!name) {
-      window.alert("Please Enter a valid name");
-      return;
-    }
-    if (password !== confirmPassword) {
-      window.alert("Passwords Dont match");
-      return;
-    }
+
     this.props.dispatch(editUser(name, password, confirmPassword, user._id));
   };
+
   componentWillUnmount() {
     this.props.dispatch(clearAuthState());
   }
@@ -45,69 +40,77 @@ class Settings extends Component {
             alt="user-dp"
           />
         </div>
+
         {error && <div className="alert error-dailog">{error}</div>}
         {error === false && (
           <div className="alert success-dailog">
-            Successfully Updated Profile!
+            Successfully updated profile!
           </div>
         )}
         <div className="field">
           <div className="field-label">Email</div>
           <div className="field-value">{user.email}</div>
         </div>
+
         <div className="field">
           <div className="field-label">Name</div>
           {editMode ? (
             <input
               type="text"
-              onChange={(e) => this.handleInput("name", e.target.value)}
+              onChange={(e) => this.handleChange('name', e.target.value)}
               value={this.state.name}
             />
           ) : (
             <div className="field-value">{user.name}</div>
           )}
         </div>
+
         {editMode && (
           <div className="field">
-            <div className="field-label">New Password</div>
+            <div className="field-label">New password</div>
+
             <input
               type="password"
-              onChange={(e) => this.handleInput("password", e.target.value)}
+              onChange={(e) => this.handleChange('password', e.target.value)}
               value={this.state.password}
             />
           </div>
         )}
+
         {editMode && (
           <div className="field">
-            <div className="field-label">Confirm Password</div>
+            <div className="field-label">Confirm password</div>
+
             <input
               type="password"
               onChange={(e) =>
-                this.handleInput("confirmPassword", e.target.value)
+                this.handleChange('confirmPassword', e.target.value)
               }
               value={this.state.confirmPassword}
             />
           </div>
         )}
+
         <div className="btn-grp">
           {editMode ? (
-            <button className="button save-btn" onClick={this.handleClick}>
+            <button className="button save-btn" onClick={this.handleSave}>
               Save
             </button>
           ) : (
             <button
               className="button edit-btn"
-              onClick={(e) => this.handleInput("editMode", true)}
+              onClick={() => this.handleChange('editMode', true)}
             >
-              Edit Profile
+              Edit profile
             </button>
           )}
+
           {editMode && (
             <div
               className="go-back"
-              onClick={(e) => this.handleInput("editMode", false)}
+              onClick={() => this.handleChange('editMode', false)}
             >
-              Go Back
+              Go back
             </div>
           )}
         </div>
@@ -115,6 +118,7 @@ class Settings extends Component {
     );
   }
 }
+
 function mapStateToProps({ auth }) {
   return {
     auth,

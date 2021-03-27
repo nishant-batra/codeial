@@ -1,18 +1,16 @@
-import { UPDATE_POSTS } from "./actionType";
-import { APIurls } from "../helpers/url";
+import { UPDATE_POSTS } from './actionTypes';
+import { APIUrls } from '../helpers/urls';
+
 export function fetchPosts() {
   return (dispatch) => {
-    const url = APIurls.fetchPosts();
+    const url = APIUrls.fetchPosts();
     fetch(url)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        console.log("DATA", data);
+        console.log(data);
         dispatch(updatePosts(data.data.posts));
-      })
-      .catch((error) => {
-        console.log(error);
       });
   };
 }

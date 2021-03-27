@@ -1,15 +1,17 @@
-import React, { Component, logErrorToMyService } from "react";
-import { connect } from "react-redux";
-import { Redirect } from "react-router";
-import { clearAuthState, login } from "../actions/auth";
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { login, clearAuthState } from '../actions/auth';
+
 class Login extends Component {
   constructor(props) {
     super(props);
-    // this.emailRef = React.createRef();
-    // this.passRef = React.createRef();
+    // this.emailInputRef = React.createRef();
+    // this.passwordInputRef = React.createRef();
     this.state = {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     };
   }
 
@@ -17,68 +19,68 @@ class Login extends Component {
     this.props.dispatch(clearAuthState());
   }
 
-  handleFormSubmit = () => {
-    //console.log(this.emailRef.current.value, this.passRef.value);
-    //  console.log(this.state);
-    const { email, password } = this.state;
-    if (email && password) {
-      this.props.dispatch(login(email, password));
-    }
-  };
   handleEmailChange = (e) => {
     this.setState({
       email: e.target.value,
     });
   };
-  handlePassChange = (e) => {
+
+  handlePasswordChange = (e) => {
     this.setState({
       password: e.target.value,
     });
   };
+
+  handleFormSubmit = (e) => {
+    e.preventDefault();
+    // console.log('this.emailInputRef', this.emailInputRef);
+    // console.log('this.passwordInputRef', this.passwordInputRef);
+    console.log('this.state', this.state);
+    const { email, password } = this.state;
+
+    if (email && password) {
+      this.props.dispatch(login(email, password));
+    }
+  };
+
   render() {
-    //  console.log("proprs", this.props);
     const { error, inProgress, isLoggedin } = this.props.auth;
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
+
     if (isLoggedin) {
-      const { from } = this.props.location.state || { from: { pathname: "/" } };
       return <Redirect to={from} />;
     }
     return (
       <form className="login-form">
-        <div className="login-signup-header"> Log In</div>
+        <span className="login-signup-header">Log In</span>
         {error && <div className="alert error-dailog">{error}</div>}
         <div className="field">
           <input
             type="email"
-            required
             placeholder="Email"
-            //  ref={this.emailRef}
+            required
+            // ref={this.emailInputRef}
             onChange={this.handleEmailChange}
+            value={this.state.email}
           />
         </div>
         <div className="field">
           <input
             type="password"
-            required
             placeholder="Password"
-            //ref={this.passRef}
-            onChange={this.handlePassChange}
+            required
+            // ref={this.passwordInputRef}
+            onChange={this.handlePasswordChange}
+            value={this.state.password}
           />
         </div>
         <div className="field">
           {inProgress ? (
-            <button
-              type="button"
-              onClick={this.handleFormSubmit}
-              disabled={inProgress}
-            >
-              Logging In
+            <button onClick={this.handleFormSubmit} disabled={inProgress}>
+              Logging in...
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={this.handleFormSubmit}
-              disabled={inProgress}
-            >
+            <button onClick={this.handleFormSubmit} disabled={inProgress}>
               Log In
             </button>
           )}
@@ -87,6 +89,7 @@ class Login extends Component {
     );
   }
 }
+
 function mapStateToProps(state) {
   return {
     auth: state.auth,

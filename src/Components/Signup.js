@@ -1,22 +1,19 @@
-import React, { Component, logErrorToMyService } from "react";
-import { connect } from "react-redux";
-import { Redirect } from "react-router";
-import { startSingup, signup, clearAuthState } from "../actions/auth";
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { startSingup, signup, clearAuthState } from '../actions/auth';
 
 class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
-      name: "",
-      confirmPassword: "",
+      email: '',
+      password: '',
+      name: '',
+      confirmPassword: '',
     };
   }
-  componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    logErrorToMyService(error, errorInfo);
-  }
+
   componentWillUnmount() {
     this.props.dispatch(clearAuthState());
   }
@@ -38,9 +35,10 @@ class Signup extends Component {
   };
 
   render() {
-    const { inProgress, error, isLoggedIn } = this.props.auth;
-    {
-      if (isLoggedIn) return <Redirect to="/" />;
+    const { inProgress, error, isLoggedin } = this.props.auth;
+
+    if (isLoggedin) {
+      return <Redirect to="/" />;
     }
     return (
       <form className="login-form">
@@ -51,7 +49,7 @@ class Signup extends Component {
             placeholder="Name"
             type="text"
             required
-            onChange={(e) => this.handleInputChange("name", e.target.value)}
+            onChange={(e) => this.handleInputChange('name', e.target.value)}
           />
         </div>
         <div className="field">
@@ -59,7 +57,7 @@ class Signup extends Component {
             placeholder="Email"
             type="email"
             required
-            onChange={(e) => this.handleInputChange("email", e.target.value)}
+            onChange={(e) => this.handleInputChange('email', e.target.value)}
           />
         </div>
         <div className="field">
@@ -68,7 +66,7 @@ class Signup extends Component {
             type="password"
             required
             onChange={(e) =>
-              this.handleInputChange("confirmPassword", e.target.value)
+              this.handleInputChange('confirmPassword', e.target.value)
             }
           />
         </div>
@@ -77,7 +75,7 @@ class Signup extends Component {
             placeholder="Password"
             type="password"
             required
-            onChange={(e) => this.handleInputChange("password", e.target.value)}
+            onChange={(e) => this.handleInputChange('password', e.target.value)}
           />
         </div>
         <div className="field">

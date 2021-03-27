@@ -1,10 +1,11 @@
-import { APIurls } from "../helpers/url";
-import { getAuthTokenFromLocalStorage } from "../helpers/Utils";
 import {
-  FETCH_USER_PROFILE,
-  USER_PROFILE_FAILURE,
   USER_PROFILE_SUCCESS,
-} from "./actionType";
+  USER_PROFILE_FAILURE,
+  FETCH_USER_PROFILE,
+} from './actionTypes';
+import { APIUrls } from '../helpers/urls';
+import { getAuthTokenFromLocalStorage } from '../helpers/utils';
+
 export function startUserProfileFetch() {
   return {
     type: FETCH_USER_PROFILE,
@@ -17,7 +18,8 @@ export function userProfileSuccess(user) {
     user,
   };
 }
-export function userProfileFailure(error) {
+
+export function userProfileFailed(error) {
   return {
     type: USER_PROFILE_FAILURE,
     error,
@@ -27,20 +29,17 @@ export function userProfileFailure(error) {
 export function fetchUserProfile(userId) {
   return (dispatch) => {
     dispatch(startUserProfileFetch());
-    const url = APIurls.userProfile(userId);
+
+    const url = APIUrls.userProfile(userId);
     fetch(url, {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          return dispatch(userProfileSuccess(data.data.user));
-        } else {
-          dispatch(userProfileFailure(data.message));
-        }
+        dispatch(userProfileSuccess(data.data.user));
       });
   };
 }
