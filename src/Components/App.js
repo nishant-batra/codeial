@@ -14,6 +14,7 @@ import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import { authenticateUser } from "../actions/auth";
 import auth from "../Reducers/auth";
+import { fetchUserFriends } from "../actions/friends";
 
 const PrivateRoute = (privateRouteProps) => {
   const { isLoggedIn, path, component: Component } = privateRouteProps;
@@ -43,6 +44,7 @@ class App extends React.Component {
     this.props.dispatch(fetchPosts());
 
     const token = getAuthTokenFromLocalStorage();
+
     let user;
     try {
       user = jwtDecode(token);
@@ -50,7 +52,7 @@ class App extends React.Component {
       console.log(error);
       return;
     }
-    console.log("user", user);
+    //    console.log("user", user);
     this.props.dispatch(
       authenticateUser({
         email: user.email,
@@ -58,11 +60,12 @@ class App extends React.Component {
         _id: user._id,
       })
     );
+    this.props.dispatch(fetchUserFriends);
   }
 
   render() {
     console.log("props", this.props);
-    const { posts } = this.props;
+    const { posts, friends } = this.props;
     return (
       <Router>
         <div>
@@ -72,7 +75,14 @@ class App extends React.Component {
               exact
               path="/"
               component={(props) => {
-                return <Home {...props} posts={posts}></Home>;
+                return (
+                  <Home
+                    {...props}
+                    posts={posts}
+                    friends={friends}
+                    isLoggedin={this.props.auth.isLoggedin}
+                  ></Home>
+                );
               }}
             ></Route>
             <Route path="/login" component={Login}></Route>
