@@ -1,14 +1,17 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import CreatePosts from "./CreatePosts";
 
 class PostsList extends Component {
   render() {
     const { posts } = this.props;
     return (
       <div className="posts-list">
+        <CreatePosts />
         {posts.map((post) => (
           <div className="post-wrapper" key={post._id}>
+            {console.log("THIS IS POST", post)}
             <div className="post-header">
               <div className="post-avatar">
                 <Link to={`/user/${post.user._id}`}>
