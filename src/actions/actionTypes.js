@@ -1,5 +1,6 @@
 export const UPDATE_POSTS = "UPDATE_POSTS";
-export const ADD_POSTS = "ADD_POSTS";
+export const UPDATE_POSTS_LIKES = "UPDATE_POSTS_LIKES";
+export const UPDATE_COMMENT_LIKES = "UPDATE_COMMENT_LIKES";
 
 // login action types
 export const LOGIN_START = "LOGIN_START";
@@ -26,3 +27,5 @@ export const FETCH_USER_PROFILE = "FETCH_USER_PROFILE";
 export const FETCH_FRIENDS_SUCCESS = "FETCH_FRIENDS_SUCCESS";
 export const ADD_FRIEND = "ADD_FRIEND";
 export const REMOVE_FRIEND = "REMOVE_FRIEND";
+export const ADD_POST = "ADD_POST";
+export const ADD_COMMENT = "ADD_COMMENT";
