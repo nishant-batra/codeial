@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { fetchUserProfile } from '../actions/profile';
-import { APIUrls } from '../helpers/urls';
-import { getAuthTokenFromLocalStorage } from '../helpers/utils';
-import { addFriend, removeFriend } from '../actions/friends';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { fetchUserProfile } from "../actions/profile";
+import { APIUrls } from "../helpers/urls";
+import { getAuthTokenFromLocalStorage } from "../helpers/utils";
+import { addFriend, removeFriend } from "../actions/friends";
 
 class UserProfile extends Component {
   constructor(props) {
@@ -22,9 +22,23 @@ class UserProfile extends Component {
       this.props.dispatch(fetchUserProfile(match.params.userId));
     }
   }
-
+  componentDidUpdate(prevProps) {
+    const { match } = this.props;
+    const {
+      match: { params: prevParams },
+    } = prevProps;
+    const {
+      match: { params: currentParams },
+    } = this.props;
+    if (
+      prevParams &&
+      currentParams &&
+      prevParams.userId !== currentParams.userId
+    )
+      this.props.dispatch(fetchUserProfile(match.params.userId));
+  }
   checkIfUserIsAFriend = () => {
-    console.log('this.props', this.props);
+    console.log("this.props", this.props);
     const { match, friends } = this.props;
     const userId = match.params.userId;
 
@@ -42,9 +56,9 @@ class UserProfile extends Component {
     const url = APIUrls.addFriend(userId);
 
     const options = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
       },
     };
@@ -55,7 +69,7 @@ class UserProfile extends Component {
     if (data.success) {
       this.setState({
         success: true,
-        successMessage: 'Added friend successfully!',
+        successMessage: "Added friend successfully!",
       });
 
       this.props.dispatch(addFriend(data.data.friendship));
@@ -73,22 +87,22 @@ class UserProfile extends Component {
     const url = APIUrls.removeFriend(match.params.userId);
 
     const extra = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
       },
     };
 
     const response = await fetch(url, extra);
     const data = await response.json();
-    console.log('await data', data);
+    console.log("await data", data);
 
     if (data.success) {
       // show user message
       this.setState({
         success: true,
-        successMessage: 'Removed friends successfully!',
+        successMessage: "Removed friends successfully!",
       });
       this.props.dispatch(removeFriend(match.params.userId));
     } else {
@@ -104,7 +118,7 @@ class UserProfile extends Component {
       match: { params },
       profile,
     } = this.props;
-    console.log('this.props', params);
+    console.log("this.props", params);
     const user = profile.user;
 
     if (profile.inProgress) {
